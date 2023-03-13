@@ -1,0 +1,11 @@
+{
+  "bindings": [
+    {
+      "name": "myQueueItem",
+      "type": "queueTrigger",
+      "direction": "in",
+      "queueName": "venkatesh-orders-queue",
+      "connection": "assessmentstorageacc_STORAGE"
+    }
+  ]
+}
