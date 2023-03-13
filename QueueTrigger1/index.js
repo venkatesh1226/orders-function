@@ -3,14 +3,18 @@ module.exports = async function (context, myQueueItem) {
     context.log(myQueueItem);
   
     const fetcher = await import("node-fetch");
+    const inventory_url=process.env.INVENTORY_URL;
+    const order_url=process.env.ORDER_URL;
+    const inventory_key=process.env.INVENTORY_KEY;
+    const order_key=process.env.ORDER_KEY;
     var oResult, pResult, updateProdRes, updateOrderRes;
     var updatedOrder;
     //Call Orders api
     try {
       oResult = await fetcher.default(
-        "https://apim-get-assessment.azure-api.net/venkatesh-orders/order/" +
+        order_url+"order/" +
           myQueueItem +
-          "?subscription-key=19cbbdf0787443b68f2b36bbdeb11459"
+          "?subscription-key="+order_key
       );
     } catch (error) {
       context.log(error);
@@ -23,9 +27,9 @@ module.exports = async function (context, myQueueItem) {
       //Call products api
       try {
         pResult = await fetcher.default(
-          "https://apim-get-assessment.azure-api.net/venkatesh/product/" +
+          inventory_url+"product/" +
             oJson.pId +
-            "?subscription-key=f5722ad8c9f043689b211295faed5500"
+            "?subscription-key="+inventory_key
         );
       } catch (error) {
         context.log(error);
@@ -46,7 +50,7 @@ module.exports = async function (context, myQueueItem) {
               picLink: pJson.picLink,
             };
             updateProdRes = await fetcher.default(
-              "https://apim-get-assessment.azure-api.net/venkatesh/edit-product?subscription-key=f5722ad8c9f043689b211295faed5500",
+              inventory_url+"edit-product?subscription-key="+inventory_key,
               {
                 headers: {
                   "Content-Type": "application/json",
@@ -81,7 +85,7 @@ module.exports = async function (context, myQueueItem) {
   
         try {
           updateOrderRes = await fetcher.default(
-            "https://apim-get-assessment.azure-api.net/venkatesh-orders/status?subscription-key=19cbbdf0787443b68f2b36bbdeb11459",
+            order_url+"status?subscription-key="+order_key,
             {
               headers: {
                 "Content-Type": "application/json",
